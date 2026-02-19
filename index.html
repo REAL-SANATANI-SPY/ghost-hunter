@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ghost Hunter · Mobile Ready</title>
+    <title>Ghost Hunter · Settings Dropdown</title>
     <style>
         * {
             margin: 0;
@@ -37,7 +37,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             border-radius: 0;
             background: rgba(20, 10, 35, 0.5);
             backdrop-filter: blur(12px);
@@ -47,12 +47,21 @@
             position: relative;
         }
 
-        .stats-panel {
+        /* Top bar with stats */
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
             margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .stats-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 2;
             padding: 8px 15px;
             background: rgba(10, 5, 20, 0.7);
             backdrop-filter: blur(8px);
@@ -80,6 +89,153 @@
             filter: drop-shadow(0 0 6px cyan);
         }
 
+        /* Settings Dropdown - NEW */
+        .settings-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            z-index: 100;
+        }
+
+        .settings-toggle {
+            background: rgba(10, 5, 20, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid #a07dff;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px #3a236a;
+            transition: all 0.2s;
+        }
+
+        .settings-toggle:hover {
+            background: rgba(30, 15, 50, 0.8);
+            border-color: #c7a6ff;
+        }
+
+        .settings-toggle.active {
+            background: #6a4cc7;
+            border-color: white;
+        }
+
+        .settings-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 280px;
+            background: rgba(15, 8, 30, 0.95);
+            backdrop-filter: blur(12px);
+            border: 2px solid #9f7aff;
+            border-radius: 24px;
+            padding: 15px;
+            color: white;
+            box-shadow: 0 15px 30px black, 0 0 30px #9f7aff;
+            display: none;
+            z-index: 200;
+        }
+
+        .settings-dropdown.show {
+            display: block;
+        }
+
+        .settings-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #c7a6ff;
+            text-align: center;
+            border-bottom: 1px solid #4b3b6b;
+            padding-bottom: 8px;
+        }
+
+        .setting-group {
+            margin-bottom: 20px;
+        }
+
+        .setting-group h3 {
+            font-size: 0.9rem;
+            color: #b3a0ff;
+            margin-bottom: 8px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        .setting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .setting-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            border: 1px solid rgba(160, 125, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .setting-option:hover {
+            background: rgba(160, 125, 255, 0.2);
+            border-color: #a07dff;
+        }
+
+        .setting-option.selected {
+            background: rgba(160, 125, 255, 0.3);
+            border-color: #c7a6ff;
+            box-shadow: 0 0 10px #9f7aff;
+        }
+
+        .setting-option input[type="radio"] {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #a07dff;
+            border-radius: 50%;
+            margin: 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .setting-option input[type="radio"]:checked {
+            background: #c7a6ff;
+            border-color: white;
+            box-shadow: 0 0 8px #c7a6ff;
+        }
+
+        .setting-option input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+        }
+
+        .option-label {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .option-desc {
+            font-size: 0.7rem;
+            color: #b3a0ff;
+            margin-top: 2px;
+        }
+
+        /* Canvas container */
         .canvas-container {
             position: relative;
             width: 100%;
@@ -102,7 +258,7 @@
             touch-action: none;
         }
 
-        /* Joystick - positioned absolutely over canvas */
+        /* Joystick */
         .joystick-area {
             position: absolute;
             bottom: 15px;
@@ -133,7 +289,7 @@
             will-change: transform;
         }
 
-        /* Fullscreen and rotation buttons */
+        /* Control buttons */
         .control-buttons {
             position: absolute;
             top: 15px;
@@ -229,8 +385,10 @@
         }
 
         @media (max-width: 600px) {
+            .top-bar { flex-direction: column; align-items: stretch; }
             .stats-panel { font-size: 0.9rem; padding: 6px 10px; }
             .stat-item { padding: 3px 8px; }
+            .settings-dropdown { width: 250px; right: 0; }
             .joystick-area { width: 80px; height: 80px; bottom: 10px; left: 10px; }
             .joystick-thumb { width: 35px; height: 35px; }
             .control-btn { width: 40px; height: 40px; font-size: 1.1rem; }
@@ -246,16 +404,118 @@
     </div>
 
     <div class="game-wrapper">
-        <div class="stats-panel">
-            <div class="stat-item"><span class="stat-icon">🏆</span> <span id="scoreDisplay">0</span></div>
-            <div class="stat-item"><span class="stat-icon">🧂</span> <span id="saltDisplay">10</span></div>
-            <div class="stat-item"><span class="stat-icon">❤️</span> <span id="healthDisplay">5/5</span></div>
+        <!-- Top bar with stats and settings -->
+        <div class="top-bar">
+            <div class="stats-panel">
+                <div class="stat-item"><span class="stat-icon">🏆</span> <span id="scoreDisplay">0</span></div>
+                <div class="stat-item"><span class="stat-icon">🧂</span> <span id="saltDisplay">10</span></div>
+                <div class="stat-item"><span class="stat-icon">❤️</span> <span id="healthDisplay">5/5</span></div>
+            </div>
+
+            <!-- Settings Dropdown -->
+            <div class="settings-container">
+                <button class="settings-toggle" id="settingsToggle">⚙️ SETTINGS ▼</button>
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <div class="settings-header">GAME SETTINGS</div>
+                    
+                    <!-- Difficulty Options -->
+                    <div class="setting-group">
+                        <h3>DIFFICULTY</h3>
+                        <div class="setting-options">
+                            <label class="setting-option" id="difficultyEasy">
+                                <input type="radio" name="difficulty" value="easy">
+                                <div class="option-label">
+                                    Easy
+                                    <div class="option-desc">40% speed • Relaxed</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="difficultyMedium">
+                                <input type="radio" name="difficulty" value="medium" checked>
+                                <div class="option-label">
+                                    Medium
+                                    <div class="option-desc">70% speed • Balanced</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="difficultyHard">
+                                <input type="radio" name="difficulty" value="hard">
+                                <div class="option-label">
+                                    Hard
+                                    <div class="option-desc">100% speed • Challenging</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Aim Mode Options -->
+                    <div class="setting-group">
+                        <h3>AIM MODE</h3>
+                        <div class="setting-options">
+                            <label class="setting-option" id="aimManual">
+                                <input type="radio" name="aimMode" value="manual">
+                                <div class="option-label">
+                                    Manual
+                                    <div class="option-desc">Drag to aim direction</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="aimAuto">
+                                <input type="radio" name="aimMode" value="auto">
+                                <div class="option-label">
+                                    Auto-aim
+                                    <div class="option-desc">Target nearest ghost</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="aimMixed">
+                                <input type="radio" name="aimMode" value="mixed" checked>
+                                <div class="option-label">
+                                    Mixed
+                                    <div class="option-desc">Drag or tap enemies</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Cursor Style (Desktop) -->
+                    <div class="setting-group">
+                        <h3>CURSOR STYLE (DESKTOP)</h3>
+                        <div class="setting-options">
+                            <label class="setting-option" id="cursorCrosshair">
+                                <input type="radio" name="cursorStyle" value="crosshair" checked>
+                                <div class="option-label">
+                                    Crosshair
+                                    <div class="option-desc">➕ Precise aiming</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="cursorScope">
+                                <input type="radio" name="cursorStyle" value="scope">
+                                <div class="option-label">
+                                    Scope
+                                    <div class="option-desc">◎ Circle reticle</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="cursorDot">
+                                <input type="radio" name="cursorStyle" value="dot">
+                                <div class="option-label">
+                                    Dot
+                                    <div class="option-desc">• Simple dot</div>
+                                </div>
+                            </label>
+                            <label class="setting-option" id="cursorNone">
+                                <input type="radio" name="cursorStyle" value="none">
+                                <div class="option-label">
+                                    None
+                                    <div class="option-desc">No cursor</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="canvas-container">
             <canvas id="gameCanvas" width="800" height="600"></canvas>
             
-            <!-- Virtual joystick for movement -->
+            <!-- Virtual joystick -->
             <div class="joystick-area" id="joystickBase">
                 <div class="joystick-thumb" id="joystickThumb"></div>
             </div>
@@ -285,9 +545,39 @@
     window.addEventListener('orientationchange', checkOrientation);
     checkOrientation();
 
+    // Settings Dropdown Toggle
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsDropdown = document.getElementById('settingsDropdown');
+    
+    function toggleSettings(e) {
+        e.stopPropagation();
+        settingsDropdown.classList.toggle('show');
+        settingsToggle.classList.toggle('active');
+    }
+    
+    settingsToggle.addEventListener('click', toggleSettings);
+    settingsToggle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        toggleSettings(e);
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!settingsToggle.contains(e.target) && !settingsDropdown.contains(e.target)) {
+            settingsDropdown.classList.remove('show');
+            settingsToggle.classList.remove('active');
+        }
+    });
+    
+    document.addEventListener('touchstart', (e) => {
+        if (!settingsToggle.contains(e.target) && !settingsDropdown.contains(e.target)) {
+            settingsDropdown.classList.remove('show');
+            settingsToggle.classList.remove('active');
+        }
+    });
+
     // Fullscreen functionality
     const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const gameWrapper = document.querySelector('.game-wrapper');
     
     fullscreenBtn.addEventListener('click', toggleFullscreen);
     fullscreenBtn.addEventListener('touchstart', (e) => {
@@ -307,7 +597,6 @@
         }
     }
 
-    // Listen for fullscreen change
     document.addEventListener('fullscreenchange', updateFullscreenButton);
     document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
     
@@ -320,6 +609,104 @@
             fullscreenBtn.style.background = 'rgba(20, 10, 35, 0.6)';
         }
     }
+
+    // ---------- SETTINGS HANDLING ----------
+    // Difficulty
+    const difficultyEasy = document.getElementById('difficultyEasy');
+    const difficultyMedium = document.getElementById('difficultyMedium');
+    const difficultyHard = document.getElementById('difficultyHard');
+    
+    // Aim Mode
+    const aimManual = document.getElementById('aimManual');
+    const aimAuto = document.getElementById('aimAuto');
+    const aimMixed = document.getElementById('aimMixed');
+    
+    // Cursor Style
+    const cursorCrosshair = document.getElementById('cursorCrosshair');
+    const cursorScope = document.getElementById('cursorScope');
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorNone = document.getElementById('cursorNone');
+    
+    // Settings values
+    let currentDifficulty = 'medium';
+    let currentAimMode = 'mixed';
+    let currentCursorStyle = 'crosshair';
+    
+    // Speed multipliers
+    const DIFFICULTY_SETTINGS = {
+        easy: { multiplier: 0.4, name: 'Easy' },
+        medium: { multiplier: 0.7, name: 'Medium' },
+        hard: { multiplier: 1.0, name: 'Hard' }
+    };
+    
+    // Handle difficulty selection
+    function setDifficulty(level) {
+        currentDifficulty = level;
+        document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
+            radio.checked = (radio.value === level);
+        });
+        
+        // Update selected visual
+        [difficultyEasy, difficultyMedium, difficultyHard].forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        if (level === 'easy') difficultyEasy.classList.add('selected');
+        else if (level === 'medium') difficultyMedium.classList.add('selected');
+        else difficultyHard.classList.add('selected');
+        
+        // Restart game with new difficulty
+        if (game) {
+            game = new Game();
+            restartBtn.classList.remove('visible');
+        }
+    }
+    
+    // Handle aim mode selection
+    function setAimMode(mode) {
+        currentAimMode = mode;
+        document.querySelectorAll('input[name="aimMode"]').forEach(radio => {
+            radio.checked = (radio.value === mode);
+        });
+        
+        // Update selected visual
+        [aimManual, aimAuto, aimMixed].forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        if (mode === 'manual') aimManual.classList.add('selected');
+        else if (mode === 'auto') aimAuto.classList.add('selected');
+        else aimMixed.classList.add('selected');
+    }
+    
+    // Handle cursor style selection
+    function setCursorStyle(style) {
+        currentCursorStyle = style;
+        document.querySelectorAll('input[name="cursorStyle"]').forEach(radio => {
+            radio.checked = (radio.value === style);
+        });
+        
+        // Update selected visual
+        [cursorCrosshair, cursorScope, cursorDot, cursorNone].forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        if (style === 'crosshair') cursorCrosshair.classList.add('selected');
+        else if (style === 'scope') cursorScope.classList.add('selected');
+        else if (style === 'dot') cursorDot.classList.add('selected');
+        else cursorNone.classList.add('selected');
+    }
+    
+    // Add click handlers for setting options
+    difficultyEasy.addEventListener('click', () => setDifficulty('easy'));
+    difficultyMedium.addEventListener('click', () => setDifficulty('medium'));
+    difficultyHard.addEventListener('click', () => setDifficulty('hard'));
+    
+    aimManual.addEventListener('click', () => setAimMode('manual'));
+    aimAuto.addEventListener('click', () => setAimMode('auto'));
+    aimMixed.addEventListener('click', () => setAimMode('mixed'));
+    
+    cursorCrosshair.addEventListener('click', () => setCursorStyle('crosshair'));
+    cursorScope.addEventListener('click', () => setCursorStyle('scope'));
+    cursorDot.addEventListener('click', () => setCursorStyle('dot'));
+    cursorNone.addEventListener('click', () => setCursorStyle('none'));
 
     // ---------- GAME CONSTANTS ----------
     const WIDTH = 800, HEIGHT = 600;
@@ -359,10 +746,262 @@
         return !(r2.x >= r1.x + r1.w || r2.x + r2.w <= r1.x || r2.y >= r1.y + r1.h || r2.y + r2.h <= r1.y);
     }
 
-    // ---------- FIX 1: Ghost limit system ----------
-    const MAX_GHOSTS = 8; // Maximum total ghosts at once
+    const MAX_GHOSTS = 8;
 
-    // ---------- PLAYER ----------
+    // ---------- BASE GHOST CLASS WITH DIFFICULTY ----------
+    class Ghost {
+        constructor(x, y, radius, baseSpeed, damage, points, color) {
+            this.x = x; 
+            this.y = y; 
+            this.radius = radius; 
+            
+            // Apply difficulty multiplier to speed
+            const multiplier = DIFFICULTY_SETTINGS[currentDifficulty].multiplier;
+            this.speed = baseSpeed * multiplier;
+            
+            this.damage = damage; 
+            this.points = points; 
+            this.color = color;
+        }
+        update(playerX, playerY) {
+            let dx = playerX - this.x;
+            let dy = playerY - this.y;
+            let dist = Math.hypot(dx, dy) || 0.1;
+            this.x += (dx / dist) * this.speed;
+            this.y += (dy / dist) * this.speed;
+            this.x = Math.max(this.radius, Math.min(WIDTH - this.radius, this.x));
+            this.y = Math.max(this.radius, Math.min(HEIGHT - this.radius, this.y));
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.fillStyle = WHITE;
+            ctx.beginPath(); ctx.arc(this.x-5, this.y-5, 3, 0, 2*Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.arc(this.x+5, this.y-5, 3, 0, 2*Math.PI); ctx.fill();
+        }
+        checkCollision(player) {
+            return Math.hypot(this.x - player.x, this.y - player.y) < this.radius + player.radius;
+        }
+    }
+    
+    class BlackGhost extends Ghost { 
+        constructor(x,y) { 
+            super(x,y,15,2.0,1,1,BLACK); 
+        } 
+    }
+    
+    class BlueGhost extends Ghost { 
+        constructor(x,y) { 
+            super(x,y,12,3.2,0.5,2,BLUE); 
+        } 
+    }
+
+    // Bosses with difficulty
+    class Boss {
+        constructor(x,y,radius,baseSpeed,damage,health,points,color,dustCooldown,dustRadius,dustDamage) {
+            this.x=x; this.y=y; this.radius=radius; 
+            
+            const multiplier = DIFFICULTY_SETTINGS[currentDifficulty].multiplier;
+            this.speed = baseSpeed * multiplier;
+            
+            this.damage=damage;
+            this.health=health; 
+            this.maxHealth=health; 
+            this.points=points; 
+            this.color=color;
+            this.dustCooldown=dustCooldown; 
+            this.dustTimer=Math.floor(Math.random()*dustCooldown);
+            this.dustRadius=dustRadius; 
+            this.dustDamage=dustDamage;
+        }
+        update(playerX, playerY) {
+            let dx = playerX - this.x, dy = playerY - this.y;
+            let dist = Math.hypot(dx, dy) || 0.1;
+            this.x += (dx/dist)*this.speed;
+            this.y += (dy/dist)*this.speed;
+            this.x = Math.max(this.radius, Math.min(WIDTH-this.radius, this.x));
+            this.y = Math.max(this.radius, Math.min(HEIGHT-this.radius, this.y));
+            this.dustTimer++;
+        }
+        draw() {
+            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI); ctx.fillStyle = this.color; ctx.fill();
+            ctx.fillStyle = '#ffd966';
+            ctx.beginPath();
+            ctx.moveTo(this.x-25, this.y-this.radius-5);
+            ctx.lineTo(this.x-15, this.y-this.radius-15);
+            ctx.lineTo(this.x, this.y-this.radius-20);
+            ctx.lineTo(this.x+15, this.y-this.radius-15);
+            ctx.lineTo(this.x+25, this.y-this.radius-5);
+            ctx.closePath(); ctx.fill();
+
+            const barW=60, barH=8;
+            ctx.fillStyle='#330000'; ctx.fillRect(this.x-barW/2, this.y-this.radius-25, barW, barH);
+            ctx.fillStyle=RED; ctx.fillRect(this.x-barW/2, this.y-this.radius-25, barW*(this.health/this.maxHealth), barH);
+
+            if (this.dustTimer >= this.dustCooldown-30) {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.dustRadius, 0, 2*Math.PI); ctx.strokeStyle=SILVER; ctx.lineWidth=2; ctx.stroke();
+            }
+        }
+        checkCollision(p) { return Math.hypot(this.x-p.x, this.y-p.y) < this.radius+p.radius; }
+        canUseDust() { return this.dustTimer >= this.dustCooldown; }
+        useDust() { this.dustTimer = 0; }
+        checkDustHit(p) { return Math.hypot(this.x-p.x, this.y-p.y) < this.dustRadius; }
+    }
+    class RedBoss extends Boss { constructor(x,y) { super(x,y,35,1.5,1.0,10,10,RED,120,150,1.5); } }
+    class PurpleBoss extends Boss { constructor(x,y) { let h = Math.floor(Math.random()*6)+15; super(x,y,40,1.8,1.0,h,20,PURPLE,100,150,1.5); } }
+
+    // Salt Projectile
+    class SaltProjectile {
+        constructor(x,y,dx,dy) { this.x=x; this.y=y; this.dx=dx; this.dy=dy; this.radius=5; this.speed=8; this.active=true; }
+        update() { this.x+=this.dx*this.speed; this.y+=this.dy*this.speed; if (this.x<-50||this.x>WIDTH+50||this.y<-50||this.y>HEIGHT+50) this.active=false; }
+        draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,2*Math.PI); ctx.fillStyle=SALT_COLOR; ctx.fill(); }
+    }
+
+    // Pickup
+    class Pickup {
+        constructor(x,y,type) { this.x=x; this.y=y; this.radius=10; this.type=type; this.color=type==='salt'?SALT_COLOR:HEALTH_GREEN; }
+        draw() {
+            ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,2*Math.PI); ctx.fillStyle=this.color; ctx.fill();
+            ctx.fillStyle=WHITE; ctx.font='bold 14px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+            if (this.type==='health') ctx.fillText('+',this.x,this.y-1); else ctx.fillText('S',this.x,this.y-1);
+        }
+        checkCollision(p) { return Math.hypot(this.x-p.x,this.y-p.y) < this.radius+p.radius; }
+    }
+
+    // Mobile shooting
+    let shootTouchId = null;
+    let lastTouchX = -1, lastTouchY = -1;
+    let aimDirection = { x: 0, y: -1 }; // Default aim up
+
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (game.state !== 'playing' && game.state !== 'final_round') return;
+        
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        const canvasX = (touch.clientX - rect.left) * scaleX;
+        const canvasY = (touch.clientY - rect.top) * scaleY;
+        
+        // Check if touch is NOT on joystick area
+        const joystickRect = document.getElementById('joystickBase').getBoundingClientRect();
+        const isOnJoystick = (
+            touch.clientX >= joystickRect.left && 
+            touch.clientX <= joystickRect.right && 
+            touch.clientY >= joystickRect.top && 
+            touch.clientY <= joystickRect.bottom
+        );
+        
+        if (!isOnJoystick) {
+            if (currentAimMode === 'manual') {
+                // In manual mode, first touch sets aim direction
+                shootTouchId = touch.identifier;
+                lastTouchX = canvasX;
+                lastTouchY = canvasY;
+                
+                // Update aim direction
+                let dx = canvasX - game.player.x;
+                let dy = canvasY - game.player.y;
+                let len = Math.hypot(dx, dy) || 0.1;
+                aimDirection = { x: dx/len, y: dy/len };
+            } else if (currentAimMode === 'auto') {
+                // Auto-aim: find nearest ghost and shoot
+                let nearestGhost = null;
+                let nearestDist = Infinity;
+                
+                const allGhosts = [...game.blackGhosts, ...game.blueGhosts];
+                for (let ghost of allGhosts) {
+                    let dist = Math.hypot(ghost.x - game.player.x, ghost.y - game.player.y);
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        nearestGhost = ghost;
+                    }
+                }
+                
+                if (nearestGhost) {
+                    let dx = nearestGhost.x - game.player.x;
+                    let dy = nearestGhost.y - game.player.y;
+                    let len = Math.hypot(dx, dy) || 0.1;
+                    game.throwSalt(dx/len, dy/len);
+                }
+            } else {
+                // Mixed mode: treat as manual aim for now
+                shootTouchId = touch.identifier;
+                lastTouchX = canvasX;
+                lastTouchY = canvasY;
+                
+                let dx = canvasX - game.player.x;
+                let dy = canvasY - game.player.y;
+                let len = Math.hypot(dx, dy) || 0.1;
+                aimDirection = { x: dx/len, y: dy/len };
+                game.throwSalt(dx/len, dy/len);
+            }
+        }
+    }, {passive:false});
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (game.state !== 'playing' && game.state !== 'final_round') return;
+        
+        if (shootTouchId !== null && (currentAimMode === 'manual' || currentAimMode === 'mixed')) {
+            for (let i = 0; i < e.touches.length; i++) {
+                if (e.touches[i].identifier === shootTouchId) {
+                    const touch = e.touches[i];
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    
+                    lastTouchX = (touch.clientX - rect.left) * scaleX;
+                    lastTouchY = (touch.clientY - rect.top) * scaleY;
+                    
+                    // Update aim direction
+                    let dx = lastTouchX - game.player.x;
+                    let dy = lastTouchY - game.player.y;
+                    let len = Math.hypot(dx, dy) || 0.1;
+                    aimDirection = { x: dx/len, y: dy/len };
+                    break;
+                }
+            }
+        }
+    }, {passive:false});
+
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.touches.length; i++) {
+            if (e.touches[i].identifier === shootTouchId) {
+                shootTouchId = null;
+                break;
+            }
+        }
+        if (e.touches.length === 0) {
+            shootTouchId = null;
+        }
+    });
+
+    canvas.addEventListener('touchcancel', (e) => {
+        e.preventDefault();
+        shootTouchId = null;
+    });
+
+    // Mouse shooting
+    canvas.addEventListener('click', (e) => {
+        if (game.state !== 'playing' && game.state !== 'final_round') return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        let dx = x - game.player.x;
+        let dy = y - game.player.y;
+        let len = Math.hypot(dx, dy) || 0.1;
+        game.throwSalt(dx/len, dy/len);
+    });
+
+    // Player Class
     class Player {
         constructor() {
             this.x = 100; this.y = 100; this.radius = 18; this.speed = 5;
@@ -434,195 +1073,7 @@
         heal(amount) { this.health = Math.min(this.maxHealth, this.health + amount); }
     }
 
-    // ---------- GHOSTS ----------
-    class Ghost {
-        constructor(x, y, radius, speed, damage, points, color) {
-            this.x = x; this.y = y; this.radius = radius; this.speed = speed;
-            this.damage = damage; this.points = points; this.color = color;
-        }
-        update(playerX, playerY) {
-            let dx = playerX - this.x;
-            let dy = playerY - this.y;
-            let dist = Math.hypot(dx, dy) || 0.1;
-            this.x += (dx / dist) * this.speed;
-            this.y += (dy / dist) * this.speed;
-            this.x = Math.max(this.radius, Math.min(WIDTH - this.radius, this.x));
-            this.y = Math.max(this.radius, Math.min(HEIGHT - this.radius, this.y));
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-            ctx.fillStyle = WHITE;
-            ctx.beginPath(); ctx.arc(this.x-5, this.y-5, 3, 0, 2*Math.PI); ctx.fill();
-            ctx.beginPath(); ctx.arc(this.x+5, this.y-5, 3, 0, 2*Math.PI); ctx.fill();
-        }
-        checkCollision(player) {
-            return Math.hypot(this.x - player.x, this.y - player.y) < this.radius + player.radius;
-        }
-    }
-    class BlackGhost extends Ghost { constructor(x,y) { super(x,y,15,2.0,1,1,BLACK); } }
-    class BlueGhost extends Ghost { constructor(x,y) { super(x,y,12,3.2,0.5,2,BLUE); } }
-
-    // ---------- BOSSES ----------
-    class Boss {
-        constructor(x,y,radius,speed,damage,health,points,color,dustCooldown,dustRadius,dustDamage) {
-            this.x=x; this.y=y; this.radius=radius; this.speed=speed; this.damage=damage;
-            this.health=health; this.maxHealth=health; this.points=points; this.color=color;
-            this.dustCooldown=dustCooldown; this.dustTimer=Math.floor(Math.random()*dustCooldown);
-            this.dustRadius=dustRadius; this.dustDamage=dustDamage;
-        }
-        update(playerX, playerY) {
-            let dx = playerX - this.x, dy = playerY - this.y;
-            let dist = Math.hypot(dx, dy) || 0.1;
-            this.x += (dx/dist)*this.speed;
-            this.y += (dy/dist)*this.speed;
-            this.x = Math.max(this.radius, Math.min(WIDTH-this.radius, this.x));
-            this.y = Math.max(this.radius, Math.min(HEIGHT-this.radius, this.y));
-            this.dustTimer++;
-        }
-        draw() {
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI); ctx.fillStyle = this.color; ctx.fill();
-            ctx.fillStyle = '#ffd966';
-            ctx.beginPath();
-            ctx.moveTo(this.x-25, this.y-this.radius-5);
-            ctx.lineTo(this.x-15, this.y-this.radius-15);
-            ctx.lineTo(this.x, this.y-this.radius-20);
-            ctx.lineTo(this.x+15, this.y-this.radius-15);
-            ctx.lineTo(this.x+25, this.y-this.radius-5);
-            ctx.closePath(); ctx.fill();
-
-            const barW=60, barH=8;
-            ctx.fillStyle='#330000'; ctx.fillRect(this.x-barW/2, this.y-this.radius-25, barW, barH);
-            ctx.fillStyle=RED; ctx.fillRect(this.x-barW/2, this.y-this.radius-25, barW*(this.health/this.maxHealth), barH);
-
-            if (this.dustTimer >= this.dustCooldown-30) {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.dustRadius, 0, 2*Math.PI); ctx.strokeStyle=SILVER; ctx.lineWidth=2; ctx.stroke();
-            }
-        }
-        checkCollision(p) { return Math.hypot(this.x-p.x, this.y-p.y) < this.radius+p.radius; }
-        canUseDust() { return this.dustTimer >= this.dustCooldown; }
-        useDust() { this.dustTimer = 0; }
-        checkDustHit(p) { return Math.hypot(this.x-p.x, this.y-p.y) < this.dustRadius; }
-    }
-    class RedBoss extends Boss { constructor(x,y) { super(x,y,35,1.5,1.0,10,10,RED,120,150,1.5); } }
-    class PurpleBoss extends Boss { constructor(x,y) { let h = Math.floor(Math.random()*6)+15; super(x,y,40,1.8,1.0,h,20,PURPLE,100,150,1.5); } }
-
-    // ---------- SALT ----------
-    class SaltProjectile {
-        constructor(x,y,dx,dy) { this.x=x; this.y=y; this.dx=dx; this.dy=dy; this.radius=5; this.speed=8; this.active=true; }
-        update() { this.x+=this.dx*this.speed; this.y+=this.dy*this.speed; if (this.x<-50||this.x>WIDTH+50||this.y<-50||this.y>HEIGHT+50) this.active=false; }
-        draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,2*Math.PI); ctx.fillStyle=SALT_COLOR; ctx.fill(); }
-    }
-
-    // ---------- PICKUP ----------
-    class Pickup {
-        constructor(x,y,type) { this.x=x; this.y=y; this.radius=10; this.type=type; this.color=type==='salt'?SALT_COLOR:HEALTH_GREEN; }
-        draw() {
-            ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,2*Math.PI); ctx.fillStyle=this.color; ctx.fill();
-            ctx.fillStyle=WHITE; ctx.font='bold 14px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
-            if (this.type==='health') ctx.fillText('+',this.x,this.y-1); else ctx.fillText('S',this.x,this.y-1);
-        }
-        checkCollision(p) { return Math.hypot(this.x-p.x,this.y-p.y) < this.radius+p.radius; }
-    }
-
-    // ---------- FIX 2: Mobile shooting with touch ----------
-    // We'll track touch position for shooting
-    let shootTouchId = null;
-    let lastTouchX = -1, lastTouchY = -1;
-
-    canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        if (game.state !== 'playing' && game.state !== 'final_round') return;
-        
-        const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        
-        // Convert to canvas coordinates
-        const canvasX = (touch.clientX - rect.left) * scaleX;
-        const canvasY = (touch.clientY - rect.top) * scaleY;
-        
-        // Check if touch is NOT on joystick area (rough check)
-        const joystickRect = document.getElementById('joystickBase').getBoundingClientRect();
-        const isOnJoystick = (
-            touch.clientX >= joystickRect.left && 
-            touch.clientX <= joystickRect.right && 
-            touch.clientY >= joystickRect.top && 
-            touch.clientY <= joystickRect.bottom
-        );
-        
-        if (!isOnJoystick) {
-            // This is a shooting touch
-            shootTouchId = touch.identifier;
-            lastTouchX = canvasX;
-            lastTouchY = canvasY;
-            
-            // Shoot immediately
-            let dx = canvasX - game.player.x;
-            let dy = canvasY - game.player.y;
-            let len = Math.hypot(dx, dy) || 0.1;
-            game.throwSalt(dx/len, dy/len);
-        }
-    }, {passive:false});
-
-    canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        if (game.state !== 'playing' && game.state !== 'final_round') return;
-        
-        // Update shooting direction if we have an active shoot touch
-        if (shootTouchId !== null) {
-            for (let i = 0; i < e.touches.length; i++) {
-                if (e.touches[i].identifier === shootTouchId) {
-                    const touch = e.touches[i];
-                    const rect = canvas.getBoundingClientRect();
-                    const scaleX = canvas.width / rect.width;
-                    const scaleY = canvas.height / rect.height;
-                    
-                    lastTouchX = (touch.clientX - rect.left) * scaleX;
-                    lastTouchY = (touch.clientY - rect.top) * scaleY;
-                    break;
-                }
-            }
-        }
-    }, {passive:false});
-
-    canvas.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        // Clear shoot touch if it ended
-        for (let i = 0; i < e.touches.length; i++) {
-            if (e.touches[i].identifier === shootTouchId) {
-                shootTouchId = null;
-                break;
-            }
-        }
-        if (e.touches.length === 0) {
-            shootTouchId = null;
-        }
-    });
-
-    canvas.addEventListener('touchcancel', (e) => {
-        e.preventDefault();
-        shootTouchId = null;
-    });
-
-    // Mouse shooting (for desktop)
-    canvas.addEventListener('click', (e) => {
-        if (game.state !== 'playing' && game.state !== 'final_round') return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        let dx = x - game.player.x;
-        let dy = y - game.player.y;
-        let len = Math.hypot(dx, dy) || 0.1;
-        game.throwSalt(dx/len, dy/len);
-    });
-
-    // ---------- GAME MANAGER ----------
+    // Game Manager
     class Game {
         constructor() {
             this.player = new Player();
@@ -639,13 +1090,11 @@
             this.pickupSpawnTimer = 0;
             this.saltCooldown = 0;
 
-            // Start with 3 black, 2 blue ghosts
             for (let i=0;i<3;i++) this.spawnGhost('black');
             for (let i=0;i<2;i++) this.spawnGhost('blue');
         }
         
         spawnGhost(type) {
-            // FIX 1: Check ghost limit
             const totalGhosts = this.blackGhosts.length + this.blueGhosts.length;
             if (totalGhosts >= MAX_GHOSTS) return;
             
@@ -693,7 +1142,6 @@
             this.ghostSpawnTimer++;
             this.pickupSpawnTimer++;
 
-            // FIX 1: Respect ghost limit when spawning
             const totalGhosts = this.blackGhosts.length + this.blueGhosts.length;
             
             if (this.redBosses.length===0 && this.ghostSpawnTimer>=90) {
@@ -707,7 +1155,7 @@
                 this.pickupSpawnTimer=0; this.spawnPickup();
             }
 
-            // Update and check collisions for ghosts
+            // Update ghosts
             for (let g of [...this.blackGhosts]) {
                 g.update(this.player.x,this.player.y);
                 if (g.checkCollision(this.player) && this.damageCooldown===0) {
@@ -744,7 +1192,6 @@
                 s.update();
                 if (!s.active) { this.salts = this.salts.filter(x=>x!==s); continue; }
                 
-                // Check against black ghosts
                 for (let g of [...this.blackGhosts]) {
                     if (Math.hypot(s.x-g.x,s.y-g.y) < s.radius+g.radius) {
                         this.blackGhosts = this.blackGhosts.filter(x=>x!==g);
@@ -753,7 +1200,6 @@
                     }
                 } if (!s.active) continue;
                 
-                // Check against blue ghosts
                 for (let g of [...this.blueGhosts]) {
                     if (Math.hypot(s.x-g.x,s.y-g.y) < s.radius+g.radius) {
                         this.blueGhosts = this.blueGhosts.filter(x=>x!==g);
@@ -762,7 +1208,6 @@
                     }
                 } if (!s.active) continue;
                 
-                // Check against red bosses
                 for (let b of [...this.redBosses]) {
                     if (Math.hypot(s.x-b.x,s.y-b.y) < s.radius+b.radius) {
                         b.health--; s.active=false; this.salts = this.salts.filter(x=>x!==s);
@@ -771,7 +1216,6 @@
                     }
                 } if (!s.active) continue;
                 
-                // Check against purple bosses
                 for (let b of [...this.purpleBosses]) {
                     if (Math.hypot(s.x-b.x,s.y-b.y) < s.radius+b.radius) {
                         b.health--; s.active=false; this.salts = this.salts.filter(x=>x!==s);
@@ -797,7 +1241,7 @@
             if (this.score>=25 && this.redBosses.length===0 && this.purpleBosses.length===0) this.spawnBoss('red');
             if (this.score>=70 && this.purpleBosses.length===0) this.spawnBoss('purple');
 
-            // Final round condition
+            // Final round
             if (this.score>=101 && this.redBosses.length===0 && this.purpleBosses.length===0 && this.state==='playing') {
                 this.state='final_round';
                 const corners = [[100,100], [WIDTH-100,100], [WIDTH-100,HEIGHT-100]];
@@ -837,6 +1281,36 @@
             for (let s of this.salts) s.draw();
             for (let p of this.pickups) p.draw();
 
+            // Draw aim indicator for mobile (manual/mixed mode)
+            if ((currentAimMode === 'manual' || currentAimMode === 'mixed') && 
+                (game.state === 'playing' || game.state === 'final_round')) {
+                
+                // Draw aim line from player
+                const aimLength = 50;
+                ctx.beginPath();
+                ctx.moveTo(this.player.x, this.player.y);
+                ctx.lineTo(
+                    this.player.x + aimDirection.x * aimLength,
+                    this.player.y + aimDirection.y * aimLength
+                );
+                ctx.strokeStyle = 'rgba(255, 100, 255, 0.8)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                // Draw aim circle at end
+                ctx.beginPath();
+                ctx.arc(
+                    this.player.x + aimDirection.x * aimLength,
+                    this.player.y + aimDirection.y * aimLength,
+                    8, 0, 2*Math.PI
+                );
+                ctx.fillStyle = 'rgba(255, 100, 255, 0.3)';
+                ctx.fill();
+                ctx.strokeStyle = '#ff99ff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
             // Draw state messages
             if (this.state==='final_round') {
                 ctx.fillStyle='#ff4d4d'; ctx.font='bold 42px Arial'; ctx.textAlign='center';
@@ -867,7 +1341,7 @@
         }
     }
 
-    // ---------- JOYSTICK ----------
+    // Joystick
     const base = document.getElementById('joystickBase');
     const thumb = document.getElementById('joystickThumb');
     let joystickActive = false;
@@ -902,7 +1376,6 @@
         thumb.style.transform = `translate(0px, 0px)`;
     }
 
-    // Joystick event listeners
     base.addEventListener('touchstart', handleJoystickStart, {passive:false});
     base.addEventListener('touchmove', handleJoystickMove, {passive:false});
     base.addEventListener('touchend', handleJoystickEnd);
@@ -911,7 +1384,7 @@
     window.addEventListener('mousemove', (e) => { if (joystickActive) handleJoystickMove(e); });
     window.addEventListener('mouseup', handleJoystickEnd);
 
-    // ---------- KEYBOARD FALLBACK ----------
+    // Keyboard
     let keys = {};
     window.addEventListener('keydown', (e) => {
         const key = e.key.toLowerCase();
@@ -928,7 +1401,6 @@
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && (game.state === 'playing' || game.state === 'final_round')) {
             e.preventDefault();
-            // Shoot in facing direction
             let dx = game.player.faceDir[0];
             let dy = game.player.faceDir[1];
             if (dx === 0 && dy === 0) {
@@ -938,7 +1410,7 @@
         }
     });
 
-    // Custom cursor for desktop
+    // Custom cursor (Desktop only, based on settings)
     let mouseX = -100, mouseY = -100;
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -949,43 +1421,72 @@
     });
     canvas.addEventListener('mouseleave', () => { mouseX = -100; mouseY = -100; });
 
-    // Override draw to include cursor and shoot indicator
+    // Override draw for custom cursor based on settings
     const origDraw = Game.prototype.draw;
     Game.prototype.draw = function() {
         origDraw.call(this);
         
-        // Draw custom cursor
+        // Draw custom cursor for desktop based on settings
         if (mouseX >= 0 && mouseX < WIDTH && mouseY >= 0 && mouseY < HEIGHT) {
-            ctx.beginPath();
-            ctx.arc(mouseX, mouseY, 6, 0, 2*Math.PI);
-            ctx.fillStyle = 'rgba(255, 180, 255, 0.5)';
-            ctx.fill();
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-        }
-        
-        // Draw shooting indicator for mobile
-        if (shootTouchId !== null && lastTouchX >= 0) {
-            ctx.beginPath();
-            ctx.arc(lastTouchX, lastTouchY, 10, 0, 2*Math.PI);
-            ctx.strokeStyle = '#ff99ff';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.fillStyle = 'rgba(255, 150, 255, 0.3)';
-            ctx.fill();
-            
-            // Draw line from player to touch
-            ctx.beginPath();
-            ctx.moveTo(this.player.x, this.player.y);
-            ctx.lineTo(lastTouchX, lastTouchY);
-            ctx.strokeStyle = 'rgba(255, 200, 255, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            if (currentCursorStyle === 'crosshair') {
+                // Draw crosshair
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(mouseX - 15, mouseY);
+                ctx.lineTo(mouseX - 5, mouseY);
+                ctx.moveTo(mouseX + 5, mouseY);
+                ctx.lineTo(mouseX + 15, mouseY);
+                ctx.moveTo(mouseX, mouseY - 15);
+                ctx.lineTo(mouseX, mouseY - 5);
+                ctx.moveTo(mouseX, mouseY + 5);
+                ctx.lineTo(mouseX, mouseY + 15);
+                ctx.stroke();
+                
+                // Draw outer circle
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 8, 0, 2*Math.PI);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.stroke();
+            } else if (currentCursorStyle === 'scope') {
+                // Draw scope
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 12, 0, 2*Math.PI);
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 4, 0, 2*Math.PI);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fill();
+                
+                // Cross lines
+                ctx.beginPath();
+                ctx.moveTo(mouseX - 18, mouseY);
+                ctx.lineTo(mouseX - 12, mouseY);
+                ctx.moveTo(mouseX + 12, mouseY);
+                ctx.lineTo(mouseX + 18, mouseY);
+                ctx.moveTo(mouseX, mouseY - 18);
+                ctx.lineTo(mouseX, mouseY - 12);
+                ctx.moveTo(mouseX, mouseY + 12);
+                ctx.lineTo(mouseX, mouseY + 18);
+                ctx.stroke();
+            } else if (currentCursorStyle === 'dot') {
+                // Simple dot
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 4, 0, 2*Math.PI);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            // 'none' does nothing
         }
     };
 
-    // ---------- GAME LOOP ----------
+    // Game loop
     let game = new Game();
     restartBtn.addEventListener('click', () => {
         game = new Game();
@@ -993,7 +1494,6 @@
     });
 
     function gameLoop() {
-        // Handle movement from joystick or keyboard
         let dx = joystickVector.x, dy = joystickVector.y;
         if (dx === 0 && dy === 0) {
             if (keys['arrowleft']||keys['a']) dx = -1;
@@ -1020,7 +1520,6 @@
     }
     gameLoop();
 
-    // Prevent context menu
     canvas.addEventListener('contextmenu', e=>e.preventDefault());
 })();
 </script>
